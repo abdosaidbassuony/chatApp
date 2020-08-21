@@ -1,13 +1,14 @@
 package com.example.simplechat.ui.chat
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
+import com.example.cleanarchproject.ui.base.BaseActivity
 import com.example.simplechat.R
+import com.example.simplechat.databinding.ActivityChatBinding
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : BaseActivity<ActivityChatBinding>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
-    }
+    override val layoutId: Int = R.layout.activity_chat
+    override val viewModel by viewModel<ChatSharedViewModel>()
+
+
 }

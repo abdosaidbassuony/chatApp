@@ -1,5 +1,6 @@
-package com.example.simplechat.data.repository.auth
+package com.example.simplechat.data.repository.chat
 
+import com.example.simplechat.data.firebase.authfirebase.AuthFirebase
 import com.example.simplechat.data.model.Message
 import com.example.simplechat.data.repository.chat.ChatRepository
 import io.reactivex.rxjava3.core.Single
