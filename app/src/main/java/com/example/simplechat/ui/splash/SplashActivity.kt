@@ -1,11 +1,13 @@
 package com.example.simplechat.ui.splash
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.example.simplechat.ui.authentication.AuthenticationActivity
 import com.example.simplechat.ui.chat.ChatActivity
+import com.example.simplechat.utils.openActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class SplashActivity : AppCompatActivity() {
@@ -13,14 +15,29 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initObservers()
+    }
+
+    private fun initObservers() {
+        viewModel.isSaveUserSuccess.observe(this, Observer {
+            Toast.makeText(this, "success", Toast.LENGTH_LONG).show()
+            Log.e("userData", it.toString())
+            openActivity(ChatActivity::class.java)
+            finish()
+        })
+        viewModel.isRequestFail.observe(this, Observer {
+            Log.e("anonymousUserFail", it.toString())
+
+        })
         viewModel.isUserLogin.observe(this, Observer {
             if (it) {
                 startActivity(Intent(this@SplashActivity, ChatActivity::class.java))
+                finish()
             } else {
-                startActivity(Intent(this@SplashActivity, AuthenticationActivity::class.java))
-
+                viewModel.anonymousLogin()
             }
-            finish()
+
         })
 
     }
