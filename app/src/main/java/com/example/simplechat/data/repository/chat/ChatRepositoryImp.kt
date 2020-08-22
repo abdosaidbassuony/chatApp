@@ -1,17 +1,21 @@
 package com.example.simplechat.data.repository.chat
 
-import com.example.simplechat.data.firebase.authfirebase.AuthFirebase
+import com.example.simplechat.data.firebase.chatfirebase.ChatFirebase
 import com.example.simplechat.data.model.Message
-import com.example.simplechat.data.repository.chat.ChatRepository
+import com.example.simplechat.data.model.User
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 
-class ChatRepositoryImp : ChatRepository {
-    override fun getAllMessages(): Single<Message> {
-        TODO("Not yet implemented")
+class ChatRepositoryImp(private val chatFirebase: ChatFirebase) : ChatRepository {
+    override fun getAllMessages(senderId: String, receiverId: String): Observable<List<Message>> {
+        return chatFirebase.getMessages(senderId, receiverId)
     }
 
     override fun sendMessage(message: Message): Single<Message> {
-        TODO("Not yet implemented")
+        return chatFirebase.sendMessage(message)
     }
 
+    override fun getAllUser(): Observable<List<User>> {
+        return chatFirebase.getUsers()
+    }
 }

@@ -13,7 +13,7 @@ val repositoryModule = module {
     } bind (AuthRepository::class)
 
     single {
-        ChatRepositoryImp()
+        ChatRepositoryImp(get())
     } bind (ChatRepository::class)
 
 }

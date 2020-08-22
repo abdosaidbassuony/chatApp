@@ -1,9 +1,9 @@
 package com.example.simplechat.di
 
-import com.example.simplechat.ui.authentication.AuthenticationViewModel
 import com.example.simplechat.ui.chat.ChatSharedViewModel
-import com.example.simplechat.ui.chat.chats.ChatsFragment
 import com.example.simplechat.ui.chat.chats.ChatsViewModel
+import com.example.simplechat.ui.chatroom.ChatRoomSharedViewModel
+import com.example.simplechat.ui.chatroom.chatroomfragment.ChatRoomViewModel
 import com.example.simplechat.ui.splash.SplashViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -15,14 +15,16 @@ val viewModelModule = module {
     }
 
     viewModel {
-        AuthenticationViewModel(get())
+        SplashViewModel(get())
     }
 
     viewModel {
-        SplashViewModel()
+        ChatsViewModel(get())
     }
-
     viewModel {
-        ChatsViewModel()
+        ChatRoomSharedViewModel()
+    }
+    viewModel {
+        ChatRoomViewModel(get())
     }
 }
