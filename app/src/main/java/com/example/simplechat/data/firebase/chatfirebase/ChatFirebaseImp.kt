@@ -10,7 +10,7 @@ import io.reactivex.rxjava3.core.Single
 class ChatFirebaseImp : ChatFirebase {
 
     private val userReference: DatabaseReference =
-        FirebaseDatabase.getInstance().reference.child("USER")
+        FirebaseDatabase.getInstance().reference.child("users")
 
     private val reference = FirebaseDatabase.getInstance().reference
 
@@ -37,40 +37,20 @@ class ChatFirebaseImp : ChatFirebase {
     }
 
     override fun sendMessage(message: Message): Single<Message> = Single.create { emitter ->
-        //receiverNode
-        message.senderId?.let { senderId ->
-            message.receiverId?.let { receiverId ->
-                reference.child("CHAT").child(receiverId).child(senderId).child("MESSAGE").push()
-                    .setValue(message)
-                    .addOnSuccessListener {
-                        emitter.onSuccess(message)
-                    }
-                    .addOnFailureListener {
-                        emitter.onError(it)
-                    }
+        reference.child("messages").push().setValue(message)
+            .addOnSuccessListener {
+                emitter.onSuccess(message)
             }
-        }
-        //senderNode
-        message.senderId?.let { senderId ->
-            message.receiverId?.let { receiverId ->
-                reference.child("CHAT").child(senderId).child(receiverId).child("MESSAGE")
-                    .push()
-                    .setValue(message)
-                    .addOnSuccessListener {
-                        emitter.onSuccess(message)
-                    }
-                    .addOnFailureListener {
-                        emitter.onError(it)
-                    }
+            .addOnFailureListener {
+                emitter.onError(it)
             }
-        }
     }
 
     override fun getMessages(senderId: String, receiverId: String):
             Observable<List<Message>> = Observable.create { emitter ->
         val messageReference: DatabaseReference =
-            FirebaseDatabase.getInstance().reference.child("CHAT")
-                .child(senderId).child(receiverId).child("MESSAGE")
+            FirebaseDatabase.getInstance().reference.child("messages")
+
         val messageValueEventListener = object : ValueEventListener {
 
             override fun onCancelled(error: DatabaseError) {
@@ -83,13 +63,85 @@ class ChatFirebaseImp : ChatFirebase {
                 snapshot.children.forEach {
                     message = it.getValue(Message::class.java)
                     if (message != null) {
-                        Log.e("allMessages", list.toString())
+//                        Log.e("allMessages", list.toString())
                         list.add(message!!)
+                        if (senderId == message?.senderId && receiverId == message?.receiverId) {
+                            if (senderId > receiverId) {
+                                it.key?.let { key -> setUserMessages(senderId, receiverId, key) }
+                            } else {
+                                it.key?.let { key -> setUserMessages(receiverId, senderId, key) }
+                            }
+                        }
+
                     }
                 }
+
                 emitter.onNext(list)
             }
         }
         messageReference.addValueEventListener(messageValueEventListener)
     }
+
+    private fun setUserMessages(senderId: String, receiverId: String, key: String) {
+        val hashMap = HashMap<String, Any>()
+        hashMap[key] = 1
+        reference.child("user-messages").child(senderId).child(receiverId).updateChildren(hashMap)
+    }
+
+    override fun getUserMessage(senderId: String, receiverId: String):
+            Observable<List<String>> = Observable.create { emitter ->
+        val userMessages: DatabaseReference =
+            if (senderId > receiverId) {
+                FirebaseDatabase.getInstance().reference.child("user-messages").child(senderId)
+                    .child(receiverId)
+            } else {
+                FirebaseDatabase.getInstance().reference.child("user-messages").child(receiverId)
+                    .child(senderId)
+            }
+
+        val messageValueEventListener = object : ValueEventListener {
+
+            override fun onCancelled(error: DatabaseError) {
+                emitter.onError(error.toException())
+            }
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val listOfString = ArrayList<String>()
+                snapshot.children.forEach {
+                    val messageId = it.key
+                    messageId?.let { messageId -> listOfString.add(messageId) }
+                }
+                emitter.onNext(listOfString)
+                Log.e("userMessagesFirebase", listOfString.toString())
+            }
+        }
+        userMessages.addValueEventListener(messageValueEventListener)
+    }
+
+    override fun getOneToOneChat(messageId: List<String>): Observable<List<Message>> =
+        Observable.create { emitter ->
+            val messageList = ArrayList<Message>()
+            messageId.forEach { messageId ->
+                val oneToOneMessage: DatabaseReference =
+                    FirebaseDatabase.getInstance().reference.child("messages")
+                val onToOneValueEventListener = object : ValueEventListener {
+
+                    override fun onCancelled(error: DatabaseError) {
+                        emitter.onError(error.toException())
+                    }
+
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        snapshot.children.forEach { dataSnapshot ->
+                            if (dataSnapshot.key == messageId) {
+                                val message = dataSnapshot.getValue(Message::class.java)
+                                message?.let { message -> messageList.add(message) }
+                            }
+                        }
+                        emitter.onNext(messageList)
+                    }
+                }
+                oneToOneMessage.addValueEventListener(onToOneValueEventListener)
+            }
+        }
 }
+
+

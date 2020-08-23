@@ -18,4 +18,14 @@ class ChatRepositoryImp(private val chatFirebase: ChatFirebase) : ChatRepository
     override fun getAllUser(): Observable<List<User>> {
         return chatFirebase.getUsers()
     }
+
+    override fun getUserMessage(senderId: String, receiverId: String): Observable<List<String>> {
+        return chatFirebase.getUserMessage(senderId, receiverId)
+    }
+
+    override fun getOneToOneChat(
+        messageId: List<String>
+    ): Observable<List<Message>> {
+        return chatFirebase.getOneToOneChat(messageId)
+    }
 }

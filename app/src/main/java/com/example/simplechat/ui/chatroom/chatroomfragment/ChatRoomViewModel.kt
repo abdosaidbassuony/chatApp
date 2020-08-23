@@ -1,5 +1,6 @@
 package com.example.simplechat.ui.chatroom.chatroomfragment
 
+import android.util.Log
 import com.example.cleanarchproject.ui.base.BaseViewModel
 import com.example.simplechat.data.model.Message
 import com.example.simplechat.data.repository.chat.ChatRepository
@@ -30,15 +31,55 @@ class ChatRoomViewModel(
             })
     }
 
+    var messageList: List<Message>? = emptyList()
     fun getMessages(senderId: String, receiverId: String) {
         chatRepository.getAllMessages(senderId, receiverId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { }
             .subscribe({
-                isGetMessages.value = it
+//                messageList = it
+//                isGetMessages.value = it
+                Log.e("userMessagesViewModel",it.toString())
+//                showMessage(senderId,receiverId)
             }, {
                 requestFail.value = it.message
             })
+    }
+
+    fun getUserMessages(senderId: String, receiverId: String) {
+        chatRepository.getUserMessage(senderId, receiverId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { }
+            .subscribe({
+                getOneToOneMessage(it)
+                Log.e("userMessagesViewModel",it.toString())
+//                showMessage(senderId,receiverId)
+            }, {
+                requestFail.value = it.message
+            })
+    }
+
+    private fun getOneToOneMessage(messageIdList: List<String>) {
+        chatRepository.getOneToOneChat(messageIdList)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { }
+            .subscribe({
+                isGetMessages.value = it
+            },{
+
+            })
+    }
+
+    private fun userMessage(senderId: String, receiverId: String): List<Message>? {
+        return messageList?.filter {
+            senderId == it.senderId && receiverId == it.receiverId
+        }
+    }
+
+    private fun showMessage(senderId: String, receiverId: String) {
+        isGetMessages.value = userMessage(senderId, receiverId)
     }
 }

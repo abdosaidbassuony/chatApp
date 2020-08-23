@@ -13,4 +13,10 @@ interface ChatRepository {
 
     fun getAllUser():Observable<List<User>>
 
+    fun getUserMessage(senderId: String, receiverId: String): Observable<List<String>>
+
+    fun getOneToOneChat(
+         messageId: List<String>
+    ): Observable<List<Message>>
+
 }

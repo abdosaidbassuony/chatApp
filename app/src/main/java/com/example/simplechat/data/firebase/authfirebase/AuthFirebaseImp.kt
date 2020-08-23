@@ -20,7 +20,7 @@ class AuthFirebaseImp : AuthFirebase {
     }
 
     override fun saveUser(user: User): Single<User> = Single.create { emitter ->
-        reference.child("USER").child(user.userId.toString()).setValue(user)
+        reference.child("users").child(user.userId.toString()).setValue(user)
             .addOnSuccessListener {
                 emitter.onSuccess(user)
             }

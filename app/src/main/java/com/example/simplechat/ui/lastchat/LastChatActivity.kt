@@ -1,4 +1,4 @@
-package com.example.simplechat.ui.chat
+package com.example.simplechat.ui.lastchat
 
 import android.app.Activity
 import android.content.Intent
@@ -7,24 +7,24 @@ import android.view.MenuItem
 import androidx.lifecycle.Observer
 import com.example.cleanarchproject.ui.base.BaseActivity
 import com.example.simplechat.R
-import com.example.simplechat.databinding.ActivityChatBinding
-import com.example.simplechat.ui.chat.chats.ChatsFragment
+import com.example.simplechat.data.model.User
+import com.example.simplechat.databinding.ActivityLastChatBinding
+import com.example.simplechat.ui.chatroom.ChatRoomActivity
+import com.example.simplechat.ui.lastchat.lastchatFragment.LastChatFragment
 import com.example.simplechat.utils.openFragment
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class ChatActivity : BaseActivity<ActivityChatBinding>() {
-
-    override val layoutId: Int = R.layout.activity_chat
-    override val viewModel by viewModel<ChatSharedViewModel>()
-
+class LastChatActivity : BaseActivity<ActivityLastChatBinding>() {
+    override val layoutId: Int = R.layout.activity_last_chat
+    override val viewModel by viewModel<LastChatSharedViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initObservers()
+        initObserver()
     }
 
-    private fun initObservers() {
-        viewModel.openChats.observe(this, Observer {
-            openFragment(R.id.chats_container, ChatsFragment.newInstance(), true)
+    private fun initObserver() {
+        viewModel.openLastChat.observe(this, Observer {
+            openFragment(R.id.last_chat_container, LastChatFragment.newInstance(), true)
         })
     }
 
@@ -45,12 +45,12 @@ class ChatActivity : BaseActivity<ActivityChatBinding>() {
     }
 
     companion object {
-
-        fun start(activity: Activity) {
-            val intent = Intent(activity, ChatActivity::class.java)
+        const val USER = "USER"
+        fun start(activity: Activity, user: User?=null) {
+            val intent = Intent(activity, LastChatActivity::class.java)
+            intent.putExtra(USER, user)
             activity.startActivity(intent)
+
         }
     }
-
-
 }

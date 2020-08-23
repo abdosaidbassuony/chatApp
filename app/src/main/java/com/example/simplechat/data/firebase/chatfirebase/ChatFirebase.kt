@@ -12,4 +12,10 @@ interface ChatFirebase {
     fun sendMessage(message: Message) :Single<Message>
 
     fun getMessages(senderId:String,receiverId:String):Observable<List<Message>>
+
+    fun getUserMessage(senderId: String, receiverId: String): Observable<List<String>>
+
+    fun getOneToOneChat(
+        messageId: List<String>
+    ): Observable<List<Message>>
 }

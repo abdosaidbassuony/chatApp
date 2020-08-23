@@ -36,12 +36,21 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
                 }
             }
         }
+        senderId?.let { senderId ->
+            receiverUser?.let { receiverUser ->
+                receiverUser.userId?.let { receiverId ->
+                    viewModel.getUserMessages(
+                        senderId,
+                        receiverId
+                    )
+                }
+            }
+        }
+
 
         initObservers()
 
         iniListener()
-
-
 
         setupAdapter()
     }
@@ -79,10 +88,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             Log.e("sendMessageFail", it)
         })
         viewModel.isGetMessages.observe(this, Observer {
-            Log.e("allMessages", it.toString())
+            Log.e("allMessagesFragment", it.toString())
             adapter.submitList(it)
         })
     }
+
 
     companion object {
         fun newInstance(user: User) = ChatRoomFragment()
