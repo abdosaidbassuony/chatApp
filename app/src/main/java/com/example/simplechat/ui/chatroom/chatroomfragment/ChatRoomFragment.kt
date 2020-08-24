@@ -13,6 +13,7 @@ import com.example.simplechat.databinding.FragmentChatRoomBinding
 import com.example.simplechat.ui.chatroom.ChatRoomActivity.Companion.USER
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
+import java.util.*
 
 
 class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
@@ -72,12 +73,14 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             val message = binding.messageEditText.text.toString()
             val senderId = prefs.user.userId
             val receiverId = receiverUser?.userId
+            val messageTime = Calendar.getInstance().timeInMillis.toString()
             viewModel.sendMessage(
                 Message(
                     senderId = senderId,
                     receiverId = receiverId,
                     message = message,
-                    messageType = "text"
+                    messageType = "text",
+                    messageTime = messageTime
                 )
             )
         }
