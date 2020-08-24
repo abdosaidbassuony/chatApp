@@ -20,12 +20,39 @@ class AuthFirebaseImp : AuthFirebase {
     }
 
     override fun saveUser(user: User): Single<User> = Single.create { emitter ->
-        reference.child("USER").child(user.userId.toString()).setValue(user)
+        reference.child("users").child(user.userId.toString()).setValue(user)
             .addOnSuccessListener {
                 emitter.onSuccess(user)
             }
             .addOnFailureListener {
                 emitter.onError(it)
             }
+    }
+
+    override fun loginOrCreateUser(user: User): Single<User> = Single.create { emitter ->
+        val loginUser: User
+        when (user.name) {
+            "Ahmed" -> {
+                loginUser =
+                    User(userId = user.userId, imageUrl = "", name = user.name)
+                emitter.onSuccess(loginUser)
+            }
+            "Abdo" -> {
+                loginUser =
+                    User(userId = user.userId, imageUrl = "", name = user.name)
+                emitter.onSuccess(loginUser)
+            }
+            "Fawzy" -> {
+                loginUser =
+                    User(userId = user.userId, imageUrl = "", name = user.name)
+                emitter.onSuccess(loginUser)
+            }
+            "Mohamed" -> {
+                loginUser =
+                    User(userId = user.userId, imageUrl = "", name = user.name)
+                emitter.onSuccess(loginUser)
+            }
+        }
+
     }
 }

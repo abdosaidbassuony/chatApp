@@ -8,9 +8,10 @@ import com.example.cleanarchproject.ui.base.BaseFragment
 import com.example.simplechat.R
 import com.example.simplechat.data.model.Message
 import com.example.simplechat.data.model.User
+import com.example.simplechat.data.prefs.Prefs
 import com.example.simplechat.databinding.FragmentChatRoomBinding
 import com.example.simplechat.ui.chatroom.ChatRoomActivity.Companion.USER
-import com.google.firebase.auth.FirebaseAuth
+import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
 
 
@@ -18,18 +19,30 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     override val viewModel by viewModel<ChatRoomViewModel>()
     override val layoutId: Int = R.layout.fragment_chat_room
     var receiverUser: User? = null
+    private val prefs by inject<Prefs>()
     private val adapter by lazy {
-        ChatRoomAdapter()
+        ChatRoomAdapter(prefs)
     }
-    private val senderId = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getArgs()
-        senderId?.let { senderId ->
+
             receiverUser?.let { receiverUser ->
                 receiverUser.userId?.let { receiverId ->
-                    viewModel.getMessages(
+                    prefs.user.userId?.let {senderId->
+                        viewModel.getMessages(
+                            senderId,
+                            receiverId
+                        )
+                    }
+
+            }
+        }
+        prefs.user.userId?.let { senderId ->
+            receiverUser?.let { receiverUser ->
+                receiverUser.userId?.let { receiverId ->
+                    viewModel.getUserMessages(
                         senderId,
                         receiverId
                     )
@@ -37,11 +50,10 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             }
         }
 
+
         initObservers()
 
         iniListener()
-
-
 
         setupAdapter()
     }
@@ -58,7 +70,7 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
     private fun iniListener() {
         binding.sendMessageFloatingButton.setOnClickListener {
             val message = binding.messageEditText.text.toString()
-            val senderId = FirebaseAuth.getInstance().currentUser?.uid
+            val senderId = prefs.user.userId
             val receiverId = receiverUser?.userId
             viewModel.sendMessage(
                 Message(
@@ -79,10 +91,11 @@ class ChatRoomFragment : BaseFragment<FragmentChatRoomBinding>() {
             Log.e("sendMessageFail", it)
         })
         viewModel.isGetMessages.observe(this, Observer {
-            Log.e("allMessages", it.toString())
+            Log.e("allMessagesFragment", it.toString())
             adapter.submitList(it)
         })
     }
+
 
     companion object {
         fun newInstance(user: User) = ChatRoomFragment()
