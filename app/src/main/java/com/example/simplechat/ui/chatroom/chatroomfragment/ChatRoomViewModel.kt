@@ -73,13 +73,4 @@ class ChatRoomViewModel(
             })
     }
 
-    private fun userMessage(senderId: String, receiverId: String): List<Message>? {
-        return messageList?.filter {
-            senderId == it.senderId && receiverId == it.receiverId
-        }
-    }
-
-    private fun showMessage(senderId: String, receiverId: String) {
-        isGetMessages.value = userMessage(senderId, receiverId)
-    }
 }

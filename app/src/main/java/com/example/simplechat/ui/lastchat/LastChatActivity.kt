@@ -9,7 +9,6 @@ import com.example.cleanarchproject.ui.base.BaseActivity
 import com.example.simplechat.R
 import com.example.simplechat.data.model.User
 import com.example.simplechat.databinding.ActivityLastChatBinding
-import com.example.simplechat.ui.chatroom.ChatRoomActivity
 import com.example.simplechat.ui.lastchat.lastchatFragment.LastChatFragment
 import com.example.simplechat.utils.openFragment
 import org.koin.android.viewmodel.ext.android.viewModel

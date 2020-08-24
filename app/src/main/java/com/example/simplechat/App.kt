@@ -3,6 +3,7 @@ package com.example.simplechat
 import android.app.Application
 import com.example.simplechat.di.dataModule
 import com.example.simplechat.di.repositoryModule
+import com.example.simplechat.di.storageModule
 import com.example.simplechat.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -22,7 +23,7 @@ class App : Application() {
             androidContext(this@App)
 
             modules(
-                listOf(viewModelModule, dataModule, repositoryModule)
+                listOf(viewModelModule, dataModule, repositoryModule, storageModule)
             )
         }
     }

@@ -1,6 +1,7 @@
 package com.example.simplechat.data.firebase.chatfirebase
 
 import android.util.Log
+import com.example.simplechat.data.model.LastChat
 import com.example.simplechat.data.model.Message
 import com.example.simplechat.data.model.User
 import com.google.firebase.database.*
@@ -68,9 +69,13 @@ class ChatFirebaseImp : ChatFirebase {
                         if (senderId == message?.senderId && receiverId == message?.receiverId) {
                             if (senderId > receiverId) {
                                 it.key?.let { key -> setUserMessages(senderId, receiverId, key) }
+                                it.key?.let { key -> setUserMessages(receiverId, senderId, key) }
                             } else {
                                 it.key?.let { key -> setUserMessages(receiverId, senderId, key) }
+                                it.key?.let { key -> setUserMessages(senderId, receiverId, key) }
+
                             }
+
                         }
 
                     }
@@ -104,6 +109,7 @@ class ChatFirebaseImp : ChatFirebase {
             override fun onCancelled(error: DatabaseError) {
                 emitter.onError(error.toException())
             }
+
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listOfString = ArrayList<String>()
                 snapshot.children.forEach {
@@ -120,16 +126,17 @@ class ChatFirebaseImp : ChatFirebase {
     override fun getOneToOneChat(messageId: List<String>): Observable<List<Message>> =
         Observable.create { emitter ->
             val messageList = ArrayList<Message>()
-            messageId.forEach { messageId ->
-                val oneToOneMessage: DatabaseReference =
-                    FirebaseDatabase.getInstance().reference.child("messages")
-                val onToOneValueEventListener = object : ValueEventListener {
 
-                    override fun onCancelled(error: DatabaseError) {
-                        emitter.onError(error.toException())
-                    }
+            val oneToOneMessage: DatabaseReference =
+                FirebaseDatabase.getInstance().reference.child("messages")
+            val onToOneValueEventListener = object : ValueEventListener {
 
-                    override fun onDataChange(snapshot: DataSnapshot) {
+                override fun onCancelled(error: DatabaseError) {
+                    emitter.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    messageId.forEach { messageId ->
                         snapshot.children.forEach { dataSnapshot ->
                             if (dataSnapshot.key == messageId) {
                                 val message = dataSnapshot.getValue(Message::class.java)
@@ -139,9 +146,114 @@ class ChatFirebaseImp : ChatFirebase {
                         emitter.onNext(messageList)
                     }
                 }
-                oneToOneMessage.addValueEventListener(onToOneValueEventListener)
             }
+            oneToOneMessage.addValueEventListener(onToOneValueEventListener)
         }
+
+
+    override fun getListOFUserIdChats(userId: String): Observable<List<String>> =
+        Observable.create { emitter ->
+            val userIdList = ArrayList<String>()
+            val userIdChats =
+                FirebaseDatabase.getInstance().reference.child("user-messages").child(userId)
+            val userIdChatsValueEventListener = object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    emitter.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    userIdList.clear()
+                    snapshot.children.forEach { dataSnapshot ->
+                        userIdList.add(dataSnapshot.key.toString())
+                    }
+                    Log.e("userIdList", userIdList.toString())
+                    emitter.onNext(userIdList)
+                }
+            }
+            userIdChats.addValueEventListener(userIdChatsValueEventListener)
+
+
+        }
+
+    override fun getUserById(listOfUserId: List<String>): Observable<List<User>> =
+        Observable.create { emitter ->
+            val usersList = ArrayList<User>()
+
+            val userReference = FirebaseDatabase.getInstance().reference.child("users")
+            val userValueEventListener = object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    emitter.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    listOfUserId.forEach { userId ->
+                        snapshot.children.forEach { dataSnapshot ->
+                            if (userId == dataSnapshot.key) {
+                                val user = dataSnapshot.getValue(User::class.java)
+                                user?.let { usersList.add(it) }
+                            }
+                        }
+                    }
+                    Log.e("usersList", usersList.toString())
+                    emitter.onNext(usersList)
+                }
+            }
+            userReference.addValueEventListener(userValueEventListener)
+
+        }
+
+    override fun getLastMessage(
+        senderId: String,
+        receiverId: String,
+        user: User
+    ): Observable<String> =
+        Observable.create { emitter ->
+            val userMessage =
+                FirebaseDatabase.getInstance().reference.child("user-messages").child(senderId)
+                    .child(receiverId)
+            val userMeValueEventListener = object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    emitter.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    // val lastChat = getLastMessage(snapshot.children.last().key, user)
+                    //  Log.e("lastChatFirebase", lastChat.toString())
+                    emitter.onNext(snapshot.children.last().key)
+
+                }
+            }
+            userMessage.addValueEventListener(userMeValueEventListener)
+        }
+
+    val lastChatList = ArrayList<LastChat>()
+    override fun getLastChat(lastMessage: String?, user: User): Observable<List<LastChat>> =
+        Observable.create { emitter ->
+            lastChatList.clear()
+            val lastMessageReference = FirebaseDatabase.getInstance().reference.child("messages")
+            val lastMessageValueEventListener = object : ValueEventListener {
+
+                override fun onCancelled(error: DatabaseError) {
+                    emitter.onError(error.toException())
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+
+                    snapshot.children.forEach { dataSnapshot ->
+                        Log.e("LastMessageId", lastMessage.toString())
+                        if (dataSnapshot.key == lastMessage) {
+                            val message = dataSnapshot.getValue(Message::class.java)
+                            Log.e("message", message.toString())
+                            message?.let { lastMessage -> LastChat(user, lastMessage) }
+                                ?.let { list -> lastChatList.add(list) }
+                            emitter.onNext(lastChatList)
+                        }
+                    }
+                }
+            }
+            lastMessageReference.addValueEventListener(lastMessageValueEventListener)
+        }
+
 }
 
 

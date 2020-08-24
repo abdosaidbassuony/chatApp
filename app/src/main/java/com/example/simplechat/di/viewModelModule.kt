@@ -22,7 +22,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        ChatsViewModel(get())
+        ChatsViewModel(get(), get())
     }
     viewModel {
         ChatRoomSharedViewModel()
@@ -31,12 +31,12 @@ val viewModelModule = module {
         ChatRoomViewModel(get())
     }
     viewModel {
-        ChooseUserViewModel(get())
+        ChooseUserViewModel(get(), get())
     }
     viewModel {
         LastChatSharedViewModel()
     }
     viewModel {
-        LastChatViewModel()
+        LastChatViewModel(get(), get())
     }
 }

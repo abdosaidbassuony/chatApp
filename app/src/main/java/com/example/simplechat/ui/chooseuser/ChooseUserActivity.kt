@@ -50,15 +50,15 @@ class ChooseUserActivity : BaseActivity<ActivityChooseUserBinding>(), ClickListe
 
     private fun usersList(): List<User> {
         val list = ArrayList<User>()
-        list.add(User("Ahmed", "", ""))
-        list.add(User("Abdo", "", ""))
-        list.add(User("Fawzy", "", ""))
-        list.add(User("Mohamed", "", ""))
+        list.add(User("Ahmed", "", "10101010"))
+        list.add(User("Abdo", "", "20202020"))
+        list.add(User("Fawzy", "", "30303030"))
+        list.add(User("Mohamed", "", "40404040"))
         return list.toList()
 
     }
 
     override fun itemClicked(user: User) {
-        viewModel.anonymousLogin(user)
+        viewModel.loginOrCreateUser(user)
     }
 }
