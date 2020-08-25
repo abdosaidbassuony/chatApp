@@ -25,7 +25,8 @@ class LastChatFragment : BaseFragment<FragmentLastChatBinding>(), ClickListener 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // prefs.user.userId?.let {viewModel.getListOfUserIdChats(it) }
+//         prefs.user.userId?.let {viewModel.getListOfUserIdChats(it) }
+
         initObserver()
         initListener()
         setupAdapter()
@@ -45,9 +46,11 @@ class LastChatFragment : BaseFragment<FragmentLastChatBinding>(), ClickListener 
         viewModel.lastChatModel.observe(this, Observer {
             Log.e("lastChatListFragment", it.toString())
             adapter.submitList(it)
+            adapter.notifyDataSetChanged()
+
         })
         viewModel.userList.observe(this, Observer {
-            viewModel.getUserMessages(it)
+//            viewModel.getUserMessages(it)
         })
     }
 
@@ -57,7 +60,7 @@ class LastChatFragment : BaseFragment<FragmentLastChatBinding>(), ClickListener 
 
     override fun onStart() {
         super.onStart()
-        prefs.user.userId?.let { viewModel.getListOfUserIdChats(it) }
+//        prefs.user.userId?.let { viewModel.getListOfUserIdChats(it) }
     }
 
     override fun itemClicked(user: LastChat) {
