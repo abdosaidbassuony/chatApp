@@ -10,6 +10,8 @@ import com.bumptech.glide.Glide
 import com.example.simplechat.R
 import com.example.simplechat.data.model.LastChat
 import com.example.simplechat.databinding.ChatsItemBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class LastChatAdapter(private val clickListener: ClickListener, private val context: Context?) :
     ListAdapter<LastChat, LastChatAdapter.ViewHolder>(LastAdapterCallback()) {
@@ -28,8 +30,11 @@ class LastChatAdapter(private val clickListener: ClickListener, private val cont
     ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(user: LastChat, clickListener: ClickListener) {
+            val timeLong = user.message.messageTime?.toLong()
+            val format = SimpleDateFormat("h:mm a", Locale.ENGLISH)
+            val time = format.format(timeLong)
             binding.messageText.text = user.message.message
-            binding.messageTime.text = user.message.messageTime
+            binding.messageTime.text = time?.toString()
             binding.userNameText.text = user.user?.name
             context?.let { Glide.with(it).load(R.drawable.ic_user).into(binding.userCircleImage) }
             binding.root.setOnClickListener {

@@ -217,13 +217,12 @@ class ChatFirebaseImp : ChatFirebase {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    // val lastChat = getLastMessage(snapshot.children.last().key, user)
-                    //  Log.e("lastChatFirebase", lastChat.toString())
                     emitter.onNext(snapshot.children.last().key)
 
                 }
             }
             userMessage.addValueEventListener(userMeValueEventListener)
+
         }
 
     val lastChatList = ArrayList<LastChat>()
@@ -252,6 +251,7 @@ class ChatFirebaseImp : ChatFirebase {
                 }
             }
             lastMessageReference.addValueEventListener(lastMessageValueEventListener)
+//
         }
 
 }

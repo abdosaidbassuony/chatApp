@@ -19,8 +19,11 @@ class LastChatViewModel(
     val lastChatModel = SingleLiveEvent<List<LastChat>>()
     val userList = SingleLiveEvent<List<User>>()
 
+    init {
+        prefs.user.userId?.let { getListOfUserIdChats(it) }
+    }
 
-    fun getListOfUserIdChats(userId: String) {
+    private fun getListOfUserIdChats(userId: String) {
         chatRepository.getListOFUserIdChats(userId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -33,21 +36,21 @@ class LastChatViewModel(
             })
     }
 
-
     private fun getUsersById(listOfId: List<String>) {
         chatRepository.getUserById(listOfId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { }
             .subscribe({
-                userList.value = it
+//                userList.value = it
+                getUserMessages(it)
                 Log.e("usersListViewModel", it.toString())
             }, {
 
             })
     }
 
-    fun getUserMessages(listUser: List<User>) {
+    private fun getUserMessages(listUser: List<User>) {
         if (!listUser.isNullOrEmpty()) {
             listUser.forEach {
                 prefs.user.userId?.let { senderId ->
