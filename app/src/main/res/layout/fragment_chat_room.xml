@@ -11,53 +11,43 @@
         tools:context=".ui.home.chat.ChatLogActivity">
 
 
-        <RelativeLayout
-            android:id="@+id/relativeLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="55dp"
-            android:background="@drawable/chat_background"
+        <EditText
+            android:id="@+id/message_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/rounded_editetxt"
+            android:hint="@string/enter_message"
+            android:inputType="text"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/send_message_floating_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/chat_row_recycle_view"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintTop_toBottomOf="@id/chat_row_recycle_view" />
 
-            <EditText
-                android:id="@+id/message_edit_text"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginBottom="4dp"
-                android:layout_toStartOf="@+id/send_message_floating_button"
-                android:background="@drawable/rounded_editetxt"
-                android:hint="@string/enter_message"
-                android:inputType="text"
-                android:padding="8dp" />
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/send_message_floating_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="9dp"
-                android:background="@color/colorAccent"
-                android:scaleType="center"
-                android:src="@drawable/ic_send" />
-        </RelativeLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/send_message_floating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@color/colorAccent"
+            android:scaleType="center"
+            android:src="@drawable/ic_send"
+            app:layout_constraintBottom_toBottomOf="@id/message_edit_text"
+            app:layout_constraintEnd_toEndOf="parent"
+             />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_row_recycle_view"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
+            app:layout_constraintBottom_toTopOf="@+id/send_message_floating_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
