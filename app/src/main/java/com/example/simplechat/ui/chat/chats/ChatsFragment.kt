@@ -46,6 +46,7 @@ class ChatsFragment : BaseFragment<FragmentChatsBinding>(), ClickListener {
 
     override fun itemClicked(user: User) {
         ChatRoomActivity.start(requireActivity(), user)
+        activity?.finish()
     }
 }
 

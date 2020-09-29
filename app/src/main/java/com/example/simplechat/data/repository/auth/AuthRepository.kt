@@ -9,4 +9,6 @@ interface AuthRepository {
     fun anonymousLogin(): Single<FirebaseUser>
 
     fun saveUser(user:User):Single<User>
+
+    fun loginOrCreateUser(user: User):Single<User>
 }

@@ -13,4 +13,8 @@ class AuthRepositoryImp(private val authFirebase: AuthFirebase):AuthRepository {
     override fun saveUser(user: User): Single<User> {
         return authFirebase.saveUser(user)
     }
+
+    override fun loginOrCreateUser(user: User): Single<User> {
+      return  authFirebase.loginOrCreateUser(user)
+    }
 }

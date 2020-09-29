@@ -6,13 +6,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simplechat.data.model.Message
+import com.example.simplechat.data.prefs.Prefs
 import com.example.simplechat.databinding.ChatFromRawBinding
 import com.example.simplechat.databinding.ChatToRowBinding
-import com.google.firebase.auth.FirebaseAuth
 
-class ChatRoomAdapter :
+class ChatRoomAdapter(private val prefs: Prefs) :
     ListAdapter<Message, RecyclerView.ViewHolder>(ChatsCallback()) {
-    private val currentUser = FirebaseAuth.getInstance().currentUser
+
     private val SENDER = 0
     private val RECEIVER = 1
 
@@ -51,7 +51,7 @@ class ChatRoomAdapter :
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (currentList[position].senderId.equals(currentUser?.uid)) {
+        return if (currentList[position].senderId.equals(prefs.user.userId)) {
             SENDER
         } else {
             RECEIVER
